@@ -1,0 +1,50 @@
+version: '3'
+services:
+  # MariaDB
+  mariadb:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: recepes 
+      MYSQL_USER: raphael
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    networks:
+      - mynetwork
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  # SonarQube
+  sonarqube:
+    image: sonarqube
+    ports:
+      - "9000:9000"
+    networks:
+      - mynetwork
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+
+  # Jenkins
+  jenkins:
+    image: jenkins/jenkins:lts
+    privileged: true
+    user: root 
+    ports: 
+      - "8080:8080"
+      - "5000:5000"
+    networks:
+      - mynetwork
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  jenkins_home:
