@@ -5,7 +5,7 @@ services:
     image: mariadb
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: recepes 
+      MYSQL_DATABASE: recipes 
       MYSQL_USER: raphael
       MYSQL_PASSWORD: password
     ports:
@@ -27,17 +27,31 @@ services:
       - sonarqube_extensions:/opt/sonarqube/extensions
 
   # Jenkins
-  jenkins:
-    image: jenkins/jenkins:lts
-    privileged: true
-    user: root 
-    ports: 
-      - "8080:8080"
-      - "5000:5000"
-    networks:
-      - mynetwork
+  # jenkins:
+  #   image: jenkins/jenkins:lts
+  #   privileged: true
+  #   user: root 
+  #   ports: 
+  #     - "8080:8080"
+  #     - "5000:5000"
+  #   networks:
+  #     - mynetwork
+  #   volumes:
+  #     - jenkins_home:/var/jenkins_home
+  
+  dbeaver:
+    image: dbeaver/cloudbeaver
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      - DBEAVER_WS_PORT=8050
+      - DBEAVER_HOME=/opt/dbeaver
+      - DBEAVER_WORKSPACE=/workspace
+    ports:
+      - "8050:8978"
     volumes:
-      - jenkins_home:/var/jenkins_home
+      - ./dbeaver-workspace:/workspace
 
 networks:
   mynetwork:
@@ -47,4 +61,3 @@ volumes:
   mariadb_data:
   sonarqube_data:
   sonarqube_extensions:
-  jenkins_home:
